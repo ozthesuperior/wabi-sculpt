@@ -2,10 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>WebGL Sculpt</title>
-    <script type="module" crossorigin src="./assets/index-CasczFhU.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-C4GY1ckb.css">
+    <script type="module" crossorigin src="./assets/index-QGwPjwSQ.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-B3256ZwN.css">
   </head>
   <body>
     <div id="app">
@@ -18,6 +21,7 @@
             <select id="toolMode">
               <option value="sculpt">Sculpt</option>
               <option value="select">Select</option>
+              <option value="scale">Scale</option>
             </select>
           </label>
           <label class="group">
@@ -37,6 +41,35 @@
             </select>
           </label>
           <label class="group">
+            <span>Material</span>
+            <select id="materialMode">
+              <option value="default">Default</option>
+              <option value="shiny">Shiny</option>
+              <option value="metal">Metal</option>
+            </select>
+          </label>
+          <label class="group">
+            <span>Size</span>
+            <input id="brushSize" type="range" min="0.02" max="0.4" step="0.01" value="0.12" />
+          </label>
+          <label class="group">
+            <span>Strength</span>
+            <input id="brushStrength" type="range" min="0.01" max="0.6" step="0.01" value="0.18" />
+          </label>
+          <label class="group">
+            <span>Color</span>
+            <input id="colorPicker" type="color" value="#ff7a2f" />
+          </label>
+          <label class="group">
+            <span>Stamp</span>
+            <input id="stampInput" type="file" accept="image/*" />
+          </label>
+          <label class="group">
+            <span>Scale</span>
+            <input id="scaleSlider" type="range" min="0.2" max="3" step="0.05" value="1" />
+          </label>
+          <button id="resetScaleBtn" class="btn small">Reset Scale</button>
+          <label class="group">
             <span>Symmetry</span>
             <div class="toggle-row">
               <label><input id="symX" type="checkbox" /> X</label>
@@ -47,6 +80,22 @@
           <label class="group">
             <span>Show Brush</span>
             <input id="brushRingToggle" type="checkbox" checked />
+          </label>
+          <label class="group">
+            <span>UI Left</span>
+            <input id="leftColor" type="color" value="#12151e" />
+          </label>
+          <label class="group">
+            <span>UI Right</span>
+            <input id="rightColor" type="color" value="#12151e" />
+          </label>
+          <label class="group">
+            <span>UI Bottom</span>
+            <input id="bottomColor" type="color" value="#12151e" />
+          </label>
+          <label class="group">
+            <span>Canvas</span>
+            <input id="canvasColor" type="color" value="#0b0c11" />
           </label>
         </div>
       </div>
@@ -68,24 +117,8 @@
       </div>
 
       <div id="bottomPanel" class="panel bottom-bar">
-        <button class="flap" data-panel="bottomPanel">Brush</button>
+        <button class="flap" data-panel="bottomPanel">Actions</button>
         <div class="panel-body">
-          <label class="group">
-            <span>Size</span>
-            <input id="brushSize" type="range" min="0.02" max="0.4" step="0.01" value="0.12" />
-          </label>
-          <label class="group">
-            <span>Strength</span>
-            <input id="brushStrength" type="range" min="0.01" max="0.6" step="0.01" value="0.18" />
-          </label>
-          <label class="group">
-            <span>Color</span>
-            <input id="colorPicker" type="color" value="#ff7a2f" />
-          </label>
-          <label class="group">
-            <span>Stamp</span>
-            <input id="stampInput" type="file" accept="image/*" />
-          </label>
           <label class="group">
             <span>Decimate</span>
             <div class="toggle-row">
@@ -94,16 +127,67 @@
             </div>
           </label>
           <div class="spacer"></div>
-          <button id="undoBtn" class="btn">Undo</button>
-          <button id="redoBtn" class="btn">Redo</button>
+          <button id="undoBtn" class="btn icon-btn" title="Undo" aria-label="Undo">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 7H3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3 11a9 9 0 1 1 2.64 6.36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button id="redoBtn" class="btn icon-btn" title="Redo" aria-label="Redo">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M17 7h4v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 11a9 9 0 1 0-2.64 6.36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
           <button id="exportBtn" class="btn">Export GLB</button>
           <label class="btn file-btn">
             Import Mesh
             <input id="importInput" type="file" accept=".glb,.gltf,.obj" />
           </label>
+          <label class="group">
+            <span>Save Slot</span>
+            <input id="saveName" type="text" placeholder="Slot name" />
+          </label>
+          <label class="group">
+            <span>Slots</span>
+            <select id="saveSlots"></select>
+          </label>
+          <button id="saveBtn" class="btn icon-btn" title="Save" aria-label="Save">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 4h12l4 4v12H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M16 4v6H8V4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button id="loadBtn" class="btn icon-btn" title="Load" aria-label="Load">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 4v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8 10l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button id="deleteBtn" class="btn icon-btn" title="Delete" aria-label="Delete">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
           <button id="focusBtn" class="btn">Focus Layer</button>
-          <button id="zoomInBtn" class="btn">Zoom +</button>
-          <button id="zoomOutBtn" class="btn">Zoom -</button>
+          <button id="zoomInBtn" class="btn icon-btn" title="Zoom In" aria-label="Zoom In">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M10 7v6M7 10h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M15 15l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button id="zoomOutBtn" class="btn icon-btn" title="Zoom Out" aria-label="Zoom Out">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M7 10h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M15 15l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
       </div>
 
