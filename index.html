@@ -1,11 +1,120 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Wabi Sculpt Placeholder</title>
-</head>
-<body>
-  <h1>Wabi Sculpt App</h1>
-  <p>This placeholder will be replaced by the compiled Three.js sculpt app for Wabi.</p>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebGL Sculpt</title>
+    <script type="module" crossorigin src="./assets/index-CasczFhU.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-C4GY1ckb.css">
+  </head>
+  <body>
+    <div id="app">
+      <div id="leftPanel" class="panel sidebar left">
+        <button class="flap" data-panel="leftPanel">Tools</button>
+        <div class="panel-body">
+          <div class="panel-title">Tools</div>
+          <label class="group">
+            <span>Tool</span>
+            <select id="toolMode">
+              <option value="sculpt">Sculpt</option>
+              <option value="select">Select</option>
+            </select>
+          </label>
+          <label class="group">
+            <span>Brush</span>
+            <select id="brushMode">
+              <option value="inflate">Inflate</option>
+              <option value="deflate">Deflate</option>
+              <option value="smooth">Smooth</option>
+              <option value="flatten">Flatten</option>
+              <option value="scrape">Scrape</option>
+              <option value="clay">Clay</option>
+              <option value="drag">Drag</option>
+              <option value="crease">Crease</option>
+              <option value="pinch">Pinch</option>
+              <option value="paint">Paint</option>
+              <option value="stamp">Stamp</option>
+            </select>
+          </label>
+          <label class="group">
+            <span>Symmetry</span>
+            <div class="toggle-row">
+              <label><input id="symX" type="checkbox" /> X</label>
+              <label><input id="symY" type="checkbox" /> Y</label>
+              <label><input id="symZ" type="checkbox" /> Z</label>
+            </div>
+          </label>
+          <label class="group">
+            <span>Show Brush</span>
+            <input id="brushRingToggle" type="checkbox" checked />
+          </label>
+        </div>
+      </div>
+
+      <div id="rightPanel" class="panel sidebar right">
+        <button class="flap" data-panel="rightPanel">Layers</button>
+        <div class="panel-body">
+          <div class="panel-title">Layers</div>
+          <div id="layerList" class="layer-list"></div>
+          <div class="panel-actions">
+            <label class="group">
+              <span>Move Layer</span>
+              <input id="moveLayerToggle" type="checkbox" />
+            </label>
+            <button id="addLayerBtn" class="btn">Add Layer</button>
+            <button id="mergeLayersBtn" class="btn">Merge Visible</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="bottomPanel" class="panel bottom-bar">
+        <button class="flap" data-panel="bottomPanel">Brush</button>
+        <div class="panel-body">
+          <label class="group">
+            <span>Size</span>
+            <input id="brushSize" type="range" min="0.02" max="0.4" step="0.01" value="0.12" />
+          </label>
+          <label class="group">
+            <span>Strength</span>
+            <input id="brushStrength" type="range" min="0.01" max="0.6" step="0.01" value="0.18" />
+          </label>
+          <label class="group">
+            <span>Color</span>
+            <input id="colorPicker" type="color" value="#ff7a2f" />
+          </label>
+          <label class="group">
+            <span>Stamp</span>
+            <input id="stampInput" type="file" accept="image/*" />
+          </label>
+          <label class="group">
+            <span>Decimate</span>
+            <div class="toggle-row">
+              <input id="decimateRatio" type="range" min="0.1" max="0.9" step="0.05" value="0.6" />
+              <button id="decimateBtn" class="btn small">Apply</button>
+            </div>
+          </label>
+          <div class="spacer"></div>
+          <button id="undoBtn" class="btn">Undo</button>
+          <button id="redoBtn" class="btn">Redo</button>
+          <button id="exportBtn" class="btn">Export GLB</button>
+          <label class="btn file-btn">
+            Import Mesh
+            <input id="importInput" type="file" accept=".glb,.gltf,.obj" />
+          </label>
+          <button id="focusBtn" class="btn">Focus Layer</button>
+          <button id="zoomInBtn" class="btn">Zoom +</button>
+          <button id="zoomOutBtn" class="btn">Zoom -</button>
+        </div>
+      </div>
+
+      <div id="gizmo" class="gizmo">
+        <div class="gizmo-ring"></div>
+        <button class="gizmo-btn" data-axis="x">X</button>
+        <button class="gizmo-btn" data-axis="y">Y</button>
+        <button class="gizmo-btn" data-axis="z">Z</button>
+      </div>
+
+      <canvas id="gl"></canvas>
+    </div>
+  </body>
 </html>
